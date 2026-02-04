@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSAcity Dashboard - WORKING</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #0f172a; 
+            color: white; 
+            padding: 20px; 
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        /* Header */
+        header {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo h1 { color: #60a5fa; font-size: 24px; margin-bottom: 5px; }
+        .logo p { color: #94a3b8; }
+        .status { display: flex; align-items: center; gap: 15px; }
+        .status-indicator { display: flex; align-items: center; gap: 8px; }
+        .status-dot { width: 10px; height: 10px; background: #f59e0b; border-radius: 50%; }
+        .status-dot.connected { background: #22c55e; }
+        .time { 
+            background: rgba(59, 130, 246, 0.1); 
+            padding: 10px 15px; 
+            border-radius: 8px; 
+            font-family: monospace; 
+        }
+        
+        /* Tabs */
+        .tabs { 
+            display: flex; 
+            gap: 5px; 
+            margin-bottom: 20px; 
+            background: #1e293b; 
+            padding: 8px; 
+            border-radius: 8px; 
+        }
+        .tab { 
+            flex: 1; 
+            padding: 12px; 
+            background: #334155; 
+            border: none; 
+            color: #cbd5e1; 
+            cursor: pointer; 
+            border-radius: 6px; 
+            font-weight: 600; 
+        }
+        .tab:hover { background: #475569; }
+        .tab.active { background: #3b82f6; color: white; }
+        
+        /* Content */
+        .content { 
+            background: #1e293b; 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin-bottom: 20px; 
+            min-height: 400px; 
+        }
+        
+        /* KPIs */
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .kpi {
+            background: #334155;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+        .kpi h3 { color: #94a3b8; margin-bottom: 10px; font-size: 14px; }
+        .kpi-value { 
+            font-size: 32px; 
+            font-weight: bold; 
+            color: #60a5fa; 
+            margin: 10px 0; 
+        }
+        
+        /* Bins Grid */
+        .bins-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        .bin {
+            background: #334155;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+        }
+        .bin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .bin-id { font-weight: bold; color: #60a5fa; }
+        .bin-location { color: #94a3b8; font-size: 13px; }
+        .fill-level {
+            height: 8px;
+            background: #475569;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .fill-bar { height: 100%; border-radius: 4px; }
+        
+        /* Alerts */
+        .alert {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #ef4444;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 0 6px 6px 0;
+        }
+        .alert.critical { border-left-color: #ef4444; }
+        .alert.high { border-left-color: #f97316; }
+        .alert.medium { border-left-color: #f59e0b; }
+        .alert-title {
+            font-weight: bold;
+            color: #fca5a5;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .alert-location { color: #cbd5e1; margin-bottom: 8px; }
+        .alert-action {
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+        }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+        }
+        .loading i { 
+            font-size: 36px; 
+            margin-bottom: 15px; 
+            animation: spin 1s linear infinite; 
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            color: #64748b;
+            padding: 20px;
+            border-top: 1px solid #334155;
+            margin-top: 20px;
+        }
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        button:hover { background: #2563eb; }
+        button.secondary { background: #64748b; }
+        button.secondary:hover { background: #475569; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <h1><i class="fas fa-recycle"></i> SSAcity Smart Waste Management</h1>
+                <p>Real-time Monitoring Dashboard</p>
+            </div>
+            <div class="status">
+                <div class="status-indicator">
+                    <div class="status-dot" id="statusDot"></div>
+                    <span id="statusText">Loading...</span>
+                </div>
+                <div class="time" id="currentTime">--:--:--</div>
+            </div>
+        </header>
+        
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('dashboard')">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </button>
+            <button class="tab" onclick="showTab('bins')">
+                <i class="fas fa-trash-alt"></i> Smart Bins
+            </button>
+            <button class="tab" onclick="showTab('alerts')">
+                <i class="fas fa-bell"></i> Alerts
+            </button>
+        </div>
+        
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="content" style="display: block;">
+            <h2 style="margin-bottom: 20px; color: #60a5fa;">
+                <i class="fas fa-tachometer-alt"></i> Dashboard Overview
+            </h2>
+            
+            <!-- KPIs -->
+            <div class="kpis" id="kpis">
+                <div class="kpi">
+                    <h3><i class="fas fa-trash-alt"></i> Total Bins</h3>
+                    <div class="kpi-value" id="totalBins">0</div>
+                    <p>Active smart bins</p>
+                </div>
+                <div class="kpi">
+                    <h3><i class="fas fa-chart-line"></i> Avg Fill Level</h3>
+                    <div class="kpi-value" id="avgFill">0%</div>
+                    <p>Average across all bins</p>
+                </div>
+                <div class="kpi">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Critical Bins</h3>
+                    <div class="kpi-value" id="criticalBins">0</div>
+                    <p>Above 85% capacity</p>
+                </div>
+                <div class="kpi">
+                    <h3><i class="fas fa-bell"></i> Active Alerts</h3>
+                    <div class="kpi-value" id="activeAlerts">0</div>
+                    <p>Requiring attention</p>
+                </div>
+            </div>
+            
+            <!-- Recent Alerts -->
+            <h3 style="margin: 25px 0 15px 0; color: #f1f5f9;">
+                <i class="fas fa-exclamation-triangle"></i> Recent Alerts
+            </h3>
+            <div id="recentAlerts">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading alerts...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Smart Bins Tab -->
+        <div id="bins" class="content" style="display: none;">
+            <h2 style="margin-bottom: 20px; color: #60a5fa;">
+                <i class="fas fa-trash-alt"></i> Smart Bins Monitoring
+            </h2>
+            
+            <!-- Bins Grid -->
+            <div class="bins-grid" id="binsList">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading smart bins...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Alerts Tab -->
+        <div id="alerts" class="content" style="display: none;">
+            <h2 style="margin-bottom: 20px; color: #60a5fa;">
+                <i class="fas fa-bell"></i> Predictive Alerts
+            </h2>
+            
+            <!-- Alerts List -->
+            <div id="alertsList">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading alerts...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer>
+            <p>SSAcity Dashboard v3.0 | Data updates every 30 seconds</p>
+            <p>Last updated: <span id="lastUpdated">Never</span></p>
+            
+            <div class="controls">
+                <button onclick="loadData()">
+                    <i class="fas fa-sync-alt"></i> Refresh Data
+                </button>
+                <button onclick="testConnection()" class="secondary">
+                    <i class="fas fa-wifi"></i> Test Connection
+                </button>
+                <button onclick="showSystemInfo()" class="secondary">
+                    <i class="fas fa-info-circle"></i> System Info
+                </button>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- WORKING JavaScript -->
+    <script>
+        console.log('🚀 SSAcity Dashboard Initializing...');
+        
+        const API_BASE = 'http://localhost:5000';
+        let currentData = {
+            bins: [],
+            alerts: [],
+            kpis: {},
+            lastUpdate: null
+        };
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📄 Page loaded, starting dashboard...');
+            
+            // Update time
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            // Load initial data
+            loadData();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(loadData, 30000);
+            
+            console.log('✅ Dashboard initialized');
+        });
+        
+        async function loadData() {
+            console.log('🔄 Loading data from backend...');
+            setStatus('loading', 'Loading data...');
+            
+            try {
+                // Test connection first
+                console.log('Testing connection to:', API_BASE + '/health');
+                const healthRes = await fetch(API_BASE + '/health');
+                if (!healthRes.ok) {
+                    throw new Error('Backend not responding');
+                }
+                console.log('✅ Backend is reachable');
+                
+                // Load smart bins
+                console.log('Loading smart bins...');
+                const binsRes = await fetch(API_BASE + '/api/v2/smart-bins');
+                if (!binsRes.ok) throw new Error('Failed to load bins');
+                currentData.bins = await binsRes.json();
+                console.log(`✅ Loaded ${currentData.bins.length} bins`);
+                
+                // Load alerts
+                console.log('Loading alerts...');
+                const alertsRes = await fetch(API_BASE + '/api/v2/predictive-alerts');
+                if (alertsRes.ok) {
+                    currentData.alerts = await alertsRes.json();
+                    console.log(`✅ Loaded ${currentData.alerts.length} alerts`);
+                } else {
+                    console.log('⚠️ No alerts loaded');
+                    currentData.alerts = [];
+                }
+                
+                // Load KPIs
+                console.log('Loading KPIs...');
+                const kpisRes = await fetch(API_BASE + '/api/v2/operational-kpis');
+                if (kpisRes.ok) {
+                    currentData.kpis = await kpisRes.json();
+                    console.log('✅ Loaded KPIs');
+                } else {
+                    console.log('⚠️ No KPIs loaded');
+                    currentData.kpis = {};
+                }
+                
+                // Update UI
+                updateDashboard();
+                setStatus('connected', 'Connected');
+                
+                // Update timestamp
+                currentData.lastUpdate = new Date();
+                document.getElementById('lastUpdated').textContent = 
+                    currentData.lastUpdate.toLocaleTimeString();
+                
+                console.log('🎉 Data loaded successfully!');
+                
+            } catch (error) {
+                console.error('❌ Error loading data:', error);
+                setStatus('error', 'Connection failed');
+                
+                // Use fallback mock data
+                console.log('🔄 Using fallback mock data...');
+                currentData.bins = [
+                    {bin_id: 'BIN-001', location: 'Downtown Square', fill_level: 75, waste_type: 'General', battery_level: 85, status: 'Normal'},
+                    {bin_id: 'BIN-002', location: 'Central Park', fill_level: 90, waste_type: 'Recyclable', battery_level: 60, status: 'Critical'},
+                    {bin_id: 'BIN-003', location: 'Shopping Mall', fill_level: 45, waste_type: 'Organic', battery_level: 95, status: 'Normal'},
+                    {bin_id: 'BIN-004', location: 'Train Station', fill_level: 82, waste_type: 'General', battery_level: 75, status: 'Warning'}
+                ];
+                currentData.alerts = [
+                    {id: 'ALERT-001', type: 'overflow_prediction', severity: 'critical', location: 'Downtown Square - BIN-002', recommended_action: 'Schedule immediate collection'},
+                    {id: 'ALERT-002', type: 'battery_low', severity: 'high', location: 'Central Park - BIN-001', recommended_action: 'Replace battery within 24 hours'}
+                ];
+                currentData.kpis = {
+                    total_bins: 4,
+                    avg_fill: 73,
+                    critical_bins: 1,
+                    active_alerts: 2
+                };
+                updateDashboard();
+                
+                alert('⚠️ Using demo data. Backend connection failed.');
+            }
+        }
+        
+        function updateDashboard() {
+            console.log('🔄 Updating dashboard UI...');
+            updateKPIs();
+            updateBins();
+            updateAlerts();
+            updateRecentAlerts();
+        }
+        
+        function updateKPIs() {
+            console.log('📊 Updating KPIs...');
+            const bins = currentData.bins;
+            const alerts = currentData.alerts;
+            const kpis = currentData.kpis;
+            
+            // Calculate metrics
+            const totalBins = kpis.total_bins || bins.length;
+            const avgFill = kpis.avg_fill || 
+                (bins.length > 0 ? (bins.reduce((sum, bin) => sum + bin.fill_level, 0) / bins.length).toFixed(1) : '0.0');
+            const criticalBins = kpis.critical_bins || bins.filter(bin => bin.fill_level > 85).length;
+            const activeAlerts = kpis.active_alerts || alerts.length;
+            
+            // Update display
+            document.getElementById('totalBins').textContent = totalBins;
+            document.getElementById('avgFill').textContent = avgFill + '%';
+            document.getElementById('criticalBins').textContent = criticalBins;
+            document.getElementById('activeAlerts').textContent = activeAlerts;
+            
+            console.log(`📈 KPIs: ${totalBins} bins, ${avgFill}% avg, ${criticalBins} critical, ${activeAlerts} alerts`);
+        }
+        
+        function updateBins() {
+            console.log('🗑️ Updating bins display...');
+            const bins = currentData.bins;
+            const container = document.getElementById('binsList');
+            
+            if (!container) {
+                console.error('❌ binsList container not found!');
+                return;
+            }
+            
+            if (bins.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #94a3b8;">
+                        <i class="fas fa-exclamation-circle" style="font-size: 36px; margin-bottom: 15px;"></i>
+                        <h3>No bins found</h3>
+                        <p>Try refreshing the data</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            bins.forEach(bin => {
+                const fillLevel = bin.fill_level || 0;
+                let fillColor = '#10b981'; // green
+                if (fillLevel > 85) fillColor = '#ef4444'; // red
+                else if (fillLevel > 70) fillColor = '#f97316'; // orange
+                else if (fillLevel > 50) fillColor = '#f59e0b'; // yellow
+                
+                html += `
+                    <div class="bin">
+                        <div class="bin-header">
+                            <div>
+                                <div class="bin-id">${bin.bin_id}</div>
+                                <div class="bin-location">${bin.location}</div>
+                            </div>
+                            <div style="background: ${fillColor}; color: white; padding: 6px 12px; border-radius: 15px; font-weight: bold; font-size: 14px;">
+                                ${fillLevel}%
+                            </div>
+                        </div>
+                        
+                        <div class="fill-level">
+                            <div class="fill-bar" style="width: ${fillLevel}%; background: ${fillColor};"></div>
+                        </div>
+                        
+                        <div style="margin-top: 10px; font-size: 13px; color: #94a3b8;">
+                            Type: ${bin.waste_type} | Battery: ${bin.battery_level || 0}% | Status: ${bin.status || 'Unknown'}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            console.log(`✅ Displayed ${bins.length} bins`);
+        }
+        
+        function updateAlerts() {
+            console.log('🚨 Updating alerts display...');
+            const alerts = currentData.alerts;
+            const container = document.getElementById('alertsList');
+            
+            if (!container) {
+                console.error('❌ alertsList container not found!');
+                return;
+            }
+            
+            if (alerts.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #94a3b8;">
+                        <i class="fas fa-check-circle" style="font-size: 36px; margin-bottom: 15px;"></i>
+                        <h3>No active alerts</h3>
+                        <p>All systems are operating normally</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            alerts.forEach(alert => {
+                const severityClass = alert.severity || 'medium';
+                
+                html += `
+                    <div class="alert ${severityClass}">
+                        <div class="alert-title">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            ${alert.type ? alert.type.replace('_', ' ').toUpperCase() : 'ALERT'}
+                        </div>
+                        <div class="alert-location">${alert.location}</div>
+                        <div class="alert-action">
+                            <i class="fas fa-lightbulb"></i> ${alert.recommended_action || 'Review situation'}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            console.log(`✅ Displayed ${alerts.length} alerts`);
+        }
+        
+        function updateRecentAlerts() {
+            const alerts = currentData.alerts.slice(0, 3); // Top 3 alerts
+            const container = document.getElementById('recentAlerts');
+            
+            if (!container) return;
+            
+            if (alerts.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: #94a3b8;">
+                        <i class="fas fa-check-circle"></i> No recent alerts
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            alerts.forEach(alert => {
+                const severityClass = alert.severity || 'medium';
+                
+                html += `
+                    <div class="alert ${severityClass}" style="margin-bottom: 10px;">
+                        <div class="alert-title" style="font-size: 16px;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            ${alert.type ? alert.type.replace('_', ' ').toUpperCase() : 'ALERT'}
+                        </div>
+                        <div class="alert-location">${alert.location}</div>
+                        <div style="font-size: 13px; color: #cbd5e1; margin-top: 5px;">
+                            <i class="fas fa-lightbulb"></i> ${alert.recommended_action || 'Review'}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        function setStatus(state, message) {
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+            
+            if (text) text.textContent = message;
+            if (dot) {
+                dot.className = 'status-dot';
+                if (state === 'connected') {
+                    dot.classList.add('connected');
+                } else if (state === 'loading') {
+                    dot.style.background = '#f59e0b';
+                } else if (state === 'error') {
+                    dot.style.background = '#ef4444';
+                }
+            }
+        }
+        
+        function updateTime() {
+            const timeElement = document.getElementById('currentTime');
+            if (timeElement) {
+                const now = new Date();
+                timeElement.textContent = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+            }
+        }
+        
+        // Tab switching
+        window.showTab = function(tabName) {
+            console.log(`🔀 Switching to ${tabName} tab`);
+            
+            // Hide all tabs
+            document.querySelectorAll('.content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            
+            // Show selected tab
+            const selectedTab = document.getElementById(tabName);
+            if (selectedTab) {
+                selectedTab.style.display = 'block';
+            }
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        };
+        
+        // Test connection
+        window.testConnection = async function() {
+            console.log('🔌 Testing connection...');
+            setStatus('loading', 'Testing...');
+            
+            try {
+                const response = await fetch(API_BASE + '/health');
+                if (response.ok) {
+                    alert('✅ Backend is reachable!');
+                    setStatus('connected', 'Connected');
+                } else {
+                    alert('⚠️ Backend error: ' + response.status);
+                    setStatus('error', 'Connection error');
+                }
+            } catch (error) {
+                alert('❌ Cannot reach backend');
+                setStatus('error', 'No connection');
+            }
+        };
+        
+        // System info
+        window.showSystemInfo = function() {
+            const info = `
+SSAcity Dashboard v3.0
+
+Bins loaded: ${currentData.bins.length}
+Alerts loaded: ${currentData.alerts.length}
+Last update: ${currentData.lastUpdate ? currentData.lastUpdate.toLocaleTimeString() : 'Never'}
+API: ${API_BASE}
+
+Open browser console (F12) for details.
+            `;
+            alert(info);
+        };
+        
+        // Make loadData globally available
+        window.loadData = loadData;
+    </script>
+</body>
+</html>
