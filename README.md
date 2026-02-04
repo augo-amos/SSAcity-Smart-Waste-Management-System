@@ -133,8 +133,3 @@ This project is available for educational and demonstration purposes.
 
 ## Contact
 For questions or feedback, please open an issue in the GitHub repository.
-
----
-
-*SSAcity Dashboard v3.0 | Data updates every 30 seconds*  
-*Last Updated: February 2024*
