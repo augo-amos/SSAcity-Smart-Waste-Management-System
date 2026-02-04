@@ -1,14 +1,5 @@
 # SSAcity Smart Waste Management System
 
-![Dashboard Screenshot](images/dashboard.png)
-*Figure 1: Dashboard Overview - Real-time monitoring of waste bin metrics, including total bins, average fill levels, critical bins, and active alerts.*
-
-![Smart Bins Monitoring](images/smart-bins.png)
-*Figure 2: Smart Bins Monitoring - Detailed view of all waste bins showing fill levels, battery status, waste types, and current status.*
-
-![Predictive Alerts](images/alerts.png)
-*Figure 3: Predictive Alerts - Early warning system showing overflow predictions, rapid fill alerts, and temperature anomalies.*
-
 ## Overview
 A real-time smart city dashboard for monitoring waste bin fill levels with predictive alerts and operational analytics. The system provides municipal authorities with actionable insights for efficient waste management.
 
@@ -18,6 +9,26 @@ A real-time smart city dashboard for monitoring waste bin fill levels with predi
 - **Smart Alerts**: Battery level warnings, rapid fill detection, temperature monitoring
 - **Operational KPIs**: Dashboard with key performance indicators
 - **Responsive Interface**: Auto-refreshing data every 30 seconds
+
+## Dashboard Interface
+
+### Dashboard Overview
+![Dashboard Screenshot](images/dashboard.png)
+*Figure 1: Dashboard Overview - Real-time monitoring of waste bin metrics, including total bins, average fill levels, critical bins, and active alerts.*
+
+The main dashboard provides an at-a-glance view of the entire waste management system, showing key performance indicators and recent alerts that require immediate attention.
+
+### Smart Bins Monitoring
+![Smart Bins Monitoring](images/smart-bins.png)
+*Figure 2: Smart Bins Monitoring - Detailed view of all waste bins showing fill levels, battery status, waste types, and current status.*
+
+Monitor individual smart bins with color-coded fill levels, allowing waste management teams to prioritize collection routes based on actual need rather than fixed schedules.
+
+### Predictive Alerts System
+![Predictive Alerts](images/alerts.png)
+*Figure 3: Predictive Alerts - Early warning system showing overflow predictions, rapid fill alerts, and temperature anomalies.*
+
+The predictive alerting system proactively identifies potential issues before they become critical, enabling preventive maintenance and optimized collection scheduling.
 
 ## Technology Stack
 - **Backend**: Flask REST API with Python
@@ -38,10 +49,11 @@ ssacity-smart-waste/
 │   ├── index.html    # Main dashboard (Figure 1-3)
 │   └── dashboard.js  # Frontend logic
 ├── README.md         # This documentation
-└── images/           # Screenshots directory
-    ├── dashboard.png
-    ├── smart-bins.png
-    └── alerts.png
+├── images/           # Screenshots directory
+│   ├── dashboard.png
+│   ├── smart-bins.png
+│   └── alerts.png
+└── .gitignore        # Git exclusion rules
 ```
 
 ## Installation & Setup
