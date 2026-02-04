@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSAcity Smart City Dashboard v2.0</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1><i class="fas fa-recycle"></i> SSAcity Smart Waste Management</h1>
+                <p class="subtitle">Real-time Monitoring & Predictive Analytics</p>
+            </div>
+            <div class="header-right">
+                <div class="status-indicator">
+                    <div class="status-dot" id="systemStatus"></div>
+                    <span id="statusText">Connected</span>
+                </div>
+                <div class="timestamp" id="currentTime">--:--:--</div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-container">
+            <!-- KPIs -->
+            <section class="quick-stats" id="kpisGrid">
+                <div class="stat-card">
+                    <h3><i class="fas fa-spinner fa-spin"></i> Loading...</h3>
+                    <div class="stat-value">--</div>
+                </div>
+            </section>
+
+            <!-- Tabs -->
+            <div class="dashboard-tabs">
+                <button class="tab-btn active" data-tab="smart-bins">
+                    <i class="fas fa-trash-alt"></i> Smart Bins
+                </button>
+                <button class="tab-btn" data-tab="analytics">
+                    <i class="fas fa-chart-line"></i> Analytics
+                </button>
+                <button class="tab-btn" data-tab="alerts">
+                    <i class="fas fa-bell"></i> Alerts
+                </button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Smart Bins Tab -->
+                <div class="tab-pane active" id="smart-bins-tab">
+                    <div class="tab-header">
+                        <h3><i class="fas fa-trash-alt"></i> Smart Bins Monitoring</h3>
+                        <span class="badge" id="totalBins">0</span>
+                    </div>
+                    
+                    <div class="bins-controls">
+                        <input type="text" id="binSearch" placeholder="Search bins..." class="search-input">
+                        <select id="fillFilter" class="filter-select">
+                            <option value="all">All Fill Levels</option>
+                            <option value="critical">Critical (>80%)</option>
+                            <option value="high">High (60-80%)</option>
+                            <option value="medium">Medium (30-60%)</option>
+                            <option value="low">Low (<30%)</option>
+                        </select>
+                    </div>
+
+                    <div class="bins-grid" id="binsGrid">
+                        <!-- Filled by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Analytics Tab -->
+                <div class="tab-pane" id="analytics-tab">
+                    <div class="tab-header">
+                        <h3><i class="fas fa-chart-line"></i> Analytics & Insights</h3>
+                    </div>
+                    
+                    <div class="analytics-cards">
+                        <div class="analytics-card">
+                            <h4><i class="fas fa-chart-bar"></i> Zone Performance</h4>
+                            <div id="zonesTable">
+                                <!-- Filled by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <div class="analytics-card">
+                            <h4><i class="fas fa-users"></i> Platform Metrics</h4>
+                            <div id="platformMetrics">
+                                <!-- Filled by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alerts Tab -->
+                <div class="tab-pane" id="alerts-tab">
+                    <div class="tab-header">
+                        <h3><i class="fas fa-bell"></i> Predictive Alerts</h3>
+                        <span class="badge badge-danger" id="alertCount">0</span>
+                    </div>
+                    
+                    <div class="alerts-container">
+                        <div id="predictiveAlerts">
+                            <!-- Filled by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <section class="controls">
+                <button class="btn btn-primary" id="refreshBtn">
+                    <i class="fas fa-sync-alt"></i> Refresh Data
+                </button>
+                <button class="btn btn-secondary" id="exportBtn">
+                    <i class="fas fa-download"></i> Export Report
+                </button>
+                <button class="btn btn-secondary" onclick="dashboard.toggleTheme()">
+                    <i class="fas fa-moon"></i> Toggle Theme
+                </button>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 2rem; color: var(--text-muted);">
+            <p>SSAcity Smart City Dashboard v2.0 | Data updates every 30 seconds</p>
+            <p>Last updated: <span id="lastUpdated">Never</span></p>
+        </footer>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="ssacity-v2.js"></script>
+</body>
+</html>
